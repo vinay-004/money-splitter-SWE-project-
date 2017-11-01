@@ -40,13 +40,13 @@ var UserSchema = mongoose.Schema({
 
 		to_user: {      //Email of reciever
 			type:String
-		}
+		},
 		from_user:{    //Email of sender
 			type:String
-		}
+		},
 		message:{
 			type:String
-		}
+		},
 		bill_id:{
 			type: mongoose.Schema.Types.ObjectId
 		}
