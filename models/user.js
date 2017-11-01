@@ -36,6 +36,22 @@ var UserSchema = mongoose.Schema({
 	password: {
 		type: String
 	},
+	notification :[{
+
+		to_user: {      //Email of reciever
+			type:String
+		}
+		from_user:{    //Email of sender
+			type:String
+		}
+		message:{
+			type:String
+		}
+		bill_id:{
+			type: mongoose.Schema.Types.ObjectId
+		}
+
+	}],
 	groups: [mongoose.Schema.Types.ObjectId],
 	friend:[FriendSchema]
 });
