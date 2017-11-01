@@ -1,0 +1,14 @@
+body{
+	background-image: url("image4.jpg");
+	background-size:cover;
+	background-repeat:no-repeat;
+	-webkit-background-size: cover;
+-moz-background-size: cover;
+-o-background-size: cover;
+background-size: cover;
+background-size:100% 180%;
+}
+
+.mainbody{
+	margin-top: 35px;
+}
