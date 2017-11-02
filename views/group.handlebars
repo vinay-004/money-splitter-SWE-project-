@@ -87,10 +87,10 @@
                 <div class="form-group">
                                 <label>Friend email</label>
                                 <select form="friend1" class="form-control" name="member_email" placeholder="Enter Friend Details">
-                                    <option value="test">Testing</option>
-                                    <!--{{# each friend}}
+
+                                    {{# each friend}}
                                     <option value="{{this.email}}">{{this.name}}</option>
-                                    {{/each}}-->
+                                    {{/each}}
                                 </select>
 
                 </div>
@@ -130,7 +130,7 @@
              <!-- Modal Body -->
              <div class="modal-body">
 
-                 <form method="post" >
+                 <form method="post" action="user/addBill/:{{groupId}}">
                      <div class="form-group">
                          <label>Paid By</label>
                          <input type="text" class="form-control" name="paid_by" placeholder="Paid By" required>
@@ -146,7 +146,6 @@
                                   <datalist id="friend">
                                       {{# each member}}
                                           <option value="{{members._id}}"> {{members.name}}</option>
-
                                       {{/each}}
 
                                   </datalist>

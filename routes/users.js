@@ -384,6 +384,10 @@ module.exports = function(io){
     });
     router.post('/group/addBill/:id',ensureAuthenticated,function (req,res) {
         var group_id = req.params.id;
+        var partners = req.body.partners;
+        var amount = req.body.amount;
+        var note = req.body.note;
+
         Group.getGroupById(groupId,function(err,group){
             if(err){
                 console.log(err);
