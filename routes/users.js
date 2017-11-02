@@ -20,7 +20,6 @@ module.exports = function(io){
             css: ['style.css', 'bootstrap.css','image.css']
         });
     });
-var group_id;
 
     router.post('/register', function(req, res){
         
@@ -143,9 +142,7 @@ var group_id;
 
 
 
-    router.post('/login',
-      passport.authenticate('local', {successRedirect:'/', failureRedirect:'/users/login',failureFlash: true}),
-      function(req, res) {
+    router.post('/login',passport.authenticate('local', {successRedirect:'/', failureRedirect:'/users/login',failureFlash: true}),function(req, res) {
 
         res.redirect('/');
       });
@@ -159,13 +156,14 @@ var group_id;
     });
 
 
-     router.post('/addMember',ensureAuthenticated, function(req, res){
+     router.post('/addMember/:id',ensureAuthenticated, function(req, res){
 
-        var groupId = group_id;
+        var groupId = req.params.id;
         var member_email = req.body.member_email;
        
        console.log(groupId);
        console.log(member_email);
+       console.log(req);
         Group.getGroupById(groupId, function(err, mygroup){
             if(err){
                 console.log("Error" + err);
@@ -179,6 +177,7 @@ var group_id;
             }
             else{
                 console.log(mygroup);
+                var flag =false;
                 User.findOneAndUpdate({email : req.body.member_email}, {$addToSet: {groups: mygroup._id}},function(err,model){
                     if(err ){
                         console.log(err);
@@ -327,12 +326,25 @@ var group_id;
                     }
                     else {
                         console.log(members);
-                        console.log(group.bills);
-                            res.render('group',{
+                        console.log(group.bills)
+                        var option;
+                        if(group.owner.equals(req.user._id)){
+                            option= group_id;
+                        }
+                        else{
+                            option =null;
+                            console.log("owner " + group.owner + " user "+ req.user._id);
+                        }
+                            console.log(req.user.friend);
+                            res.render('group', {
+                                friend : req.user.friend,
                                 member: members,
-                                bill : group.bills,
-                                css: ['dashboard.css', 'bootstrap.css','dashboardimage2.css']
+                                bill: group.bills,
+                                groupId: group_id,
+                                settleOption: option,
+                                css: ['dashboard.css', 'bootstrap.css', 'dashboardimage2.css']
                             });
+
                     }
 
                 })
@@ -341,6 +353,67 @@ var group_id;
         });
 
     });
+    router.post('/group/settle/:id',ensureAuthenticated,function (req,res) {
+        var group_id = req.params.id;
+        Group.getGroupById(groupId,function(err,group){
+            if(err){
+                console.log(err);
+                req.flash('error_msg', 'Something went wrong.Try again.');
+                res.redirect('/');
+            }
+            else if(group===null){
+                console.log('ERROR user not found');
+                req.flash('error_msg', 'No such group');
+                res.redirect('/');
+            }
+            else{
+                for(var i=0 ;i<group.bills.length;i++){
+                    for(var j=0;j<group.bills[i].partners.length;j++){
+                        if(!group.bills[i].partners[j].status.equals("Unpaied")){
+                            group.bills[i].partners[j].status="Paid";
+                            User.Update()
+                        }
+                    }
+                }
+
+
+
+
+            }
+        });
+    });
+    router.post('/group/addBill/:id',ensureAuthenticated,function (req,res) {
+        var group_id = req.params.id;
+        Group.getGroupById(groupId,function(err,group){
+            if(err){
+                console.log(err);
+                req.flash('error_msg', 'Something went wrong.Try again.');
+                res.redirect('/');
+            }
+            else if(group===null){
+                console.log('ERROR user not found');
+                req.flash('error_msg', 'No such group');
+                res.redirect('/');
+            }
+            else{
+                for(var i=0 ;i<group.bills.length;i++){
+                    for(var j=0;j<group.bills[i].partners.length;j++){
+                        if(!group.bills[i].partners[j].status.equals("Unpaied")){
+                            group.bills[i].partners[j].status="Paid";
+
+                        }
+                    }
+                }
+
+
+
+
+            }
+        });
+    });
+
+
+
 
     io.sockets.on('connection',function(socket){
     connections.push(socket);

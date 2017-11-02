@@ -4,8 +4,6 @@
 **/node_modules/**/*
 */node_modules/**/*
 node_modules/**/*
-<<<<<<< HEAD
 .gitignore
-=======
-.gitignore
->>>>>>> origin/master
+.idea/
+money-splitter-SWE-project-.iml

@@ -27,6 +27,9 @@ var GroupSchema = mongoose.Schema({
                 amount:{
                     type:Number,
                     integer : true
+                },
+                status:{
+                    type: String
                 }
             }]
         }]

@@ -29,11 +29,13 @@
                 Add Bill
             </button>
             </div>
-            <div class="col-6 col-sm-3 placeholder">
-             <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalNorm2">
-                Settle
-            </button>
-            </div>
+              {{# if settleOption}}
+                <div class="col-6 col-sm-3 placeholder">
+                 <button class="btn btn-primary btn-lg" onclick="user/group/settle/:{{groupId}}" ">
+                    Settle
+                </button>
+                </div>
+              {{/if}}
           </section>
     </div>
         <h2>Bills</h2>
@@ -81,18 +83,17 @@
             <!-- Modal Body -->
             <div class="modal-body">
                 
-               <form method="post" action="/users/addMember">
+               <form method="post"   id = "friend1" action="/users/addMember/{{groupId}}">
                 <div class="form-group">
                                 <label>Friend email</label>
-                                <input list="friends" class="form-control" name="member_email" placeholder="Enter Friend Details">
-                                <datalist id="friends">
-                                	<option value="Ayush">
-                                	<option value="Vinay">
-                                  <option value="Jindal">
-                                  <option value="Pranshu">
-                                  <option value="Samatia">
-                                </datalist>
-                            </div>
+                                <select form="friend1" class="form-control" name="member_email" placeholder="Enter Friend Details">
+                                    <option value="test">Testing</option>
+                                    <!--{{# each friend}}
+                                    <option value="{{this.email}}">{{this.name}}</option>
+                                    {{/each}}-->
+                                </select>
+
+                </div>
                             <button type="submit" class="btn btn-default">Submit</button>
               </form>
                 
@@ -142,12 +143,12 @@
                         <div id="dynamicInput">
                             Divided Between<br>
                              <input list="friends" name="myInputs[]" placeholder="Partners name">
-                                  <datalist id="friends">
-                                  <option value="Ayush">
-                                  <option value="Vinay">
-                                  <option value="Jindal">
-                                  <option value="Pranshu">
-                                  <option value="Samatia">
+                                  <datalist id="friend">
+                                      {{# each member}}
+                                          <option value="{{members._id}}"> {{members.name}}</option>
+
+                                      {{/each}}
+
                                   </datalist>
                                <input type="number"  name = "myInputs1[]" placeholder="amount">
                         </div>
