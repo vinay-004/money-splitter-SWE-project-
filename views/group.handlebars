@@ -14,22 +14,23 @@
         </nav>
 
 
+
 <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
     <div class="mainbody">
-          <h1>Group Dashboard</h1>
+          <h1 style="color: white;">Group Dashboard</h1>
 
           <section class="row text-center placeholders">
-            <div class="col-6 col-sm-3 placeholder">
+            <div class="col-4 col-sm-4 placeholder">
               <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalNorm">
                 Add Member
             </button>
             </div>
-            <div class="col-6 col-sm-3 placeholder">
+            <div class="col-4 col-sm-4 placeholder">
              <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalNorm1">
                 Add Bill
             </button>
             </div>
-            <div class="col-6 col-sm-3 placeholder">
+            <div class="col-4 col-sm-4 placeholder">
              <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalNorm2">
                 Settle
             </button>
@@ -129,7 +130,7 @@
              <!-- Modal Body -->
              <div class="modal-body">
 
-                 <form method="post" >
+                 <form method="post" action="">
                      <div class="form-group">
                          <label>Paid By</label>
                          <input type="text" class="form-control" name="paid_by" placeholder="Paid By" required>
@@ -141,6 +142,7 @@
                      <div class="form-group">
                         <div id="dynamicInput">
                             Divided Between<br>
+
                              <input list="friends" name="myInputs[]" placeholder="Partners name">
                                   <datalist id="friends">
                                   <option value="Ayush">
@@ -149,7 +151,7 @@
                                   <option value="Pranshu">
                                   <option value="Samatia">
                                   </datalist>
-                               <input type="number"  name = "myInputs1[]" placeholder="amount">
+                               <input type="number"  name = "myInputs[]" placeholder="amount">
                         </div>
                        <input type="button" value="Add another text input" onClick="addInput('dynamicInput');">
                      </div>
@@ -170,16 +172,16 @@
      </div>
  </div>
 
-  <div class="container">
+  <div class="container" id="chatting">
        <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-1">
         	</div>
-        <div class="col-md-8">
+        <div class="col-md-11">
             <div class="chat" id="chat"></div>
             <form id="messageForm">
                 <div class="form-group">
                     <label>Enter Message</label>
-                    <textarea class="form-control" id="message" cols="30" rows="10"></textarea>
+                    <textarea class="form-control" id="message" cols="50" rows="5" style="color: white;"></textarea>
                     <br>
                     <input type="submit" class="btn btn-primary" value="SendMessage" />
 
@@ -205,7 +207,7 @@
             });
 
             socket.on('new message',function(data){
-                $chat.append('<div class="well">' +data.msg + '</div>');
+                $chat.append('<div style="color:white;" class="well well-sm">' +data.msg + '</div>');
             });
        });
     
@@ -222,7 +224,7 @@ function addInput(divName){
      }
      else {
           var newdiv = document.createElement('div');
-          newdiv.innerHTML = "Divided Between " + (counter + 1) + " <br><input type='text' name='myInputs[]'> <input type='text' name='myInputs[]'>";
+          newdiv.innerHTML = "Divided Between " + (counter + 1) + " <br><input type='text' name='myInputs[]'> <input type='number' name='myInputs[]'>";
           document.getElementById(divName).appendChild(newdiv);
           counter++;
      }
