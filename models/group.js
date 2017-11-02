@@ -1,8 +1,32 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 //var uniqueValidator = require('mongoose-unique-validator');
+var partnership = mongoose.Schema({
+    id: {
+        type: mongoose.Schema.Types.ObjectId, ref  :   'User'
+    },
+    amount: {
+        type: Number,
+            integer : true
+    },
+    status: {
+        type: String
+    }
 
-
+});
+var Bill = mongoose.Schema({
+    paid_By:{
+        type:mongoose.Schema.Types.ObjectId, ref :'User'
+    },
+    amount :{
+        type : Number,
+        integer :true
+    },
+    note :{
+        type: String
+    },
+    partners: [partnership]
+});
 // Group Schema
 var GroupSchema = mongoose.Schema({
         name:{
@@ -16,23 +40,7 @@ var GroupSchema = mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId , ref : 'User'
         },
         members :[mongoose.Schema.Types.ObjectId],
-        bills:[{
-            note :{
-                type: String
-            },
-            partners: [{
-                id : {
-                    type: mongoose.Schema.Types.ObjectId , ref : 'User'
-                },
-                amount:{
-                    type:Number,
-                    integer : true
-                },
-                status:{
-                    type: String
-                }
-            }]
-        }]
+        bills:[Bill]
 
 });
 //GroupSchema.index({ "name": 1, "ownwer": 1}, { "unique": true });

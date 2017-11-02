@@ -31,7 +31,7 @@
             </div>
               {{# if settleOption}}
                 <div class="col-6 col-sm-3 placeholder">
-                 <button class="btn btn-primary btn-lg" onclick="user/group/settle/:{{groupId}}" ">
+                 <button class="btn btn-primary btn-lg" onclick="user/group/settle/{{groupId}}" ">
                     Settle
                 </button>
                 </div>
@@ -45,16 +45,16 @@
                 <tr>
                   <th>Paid By</th>
                   <th>Amount</th>
-                  <th>Partners</th>
+                  <th>Note</th>
                   <!--<th>Flag</th> -->
                 </tr>
               </thead>
               <tbody>
               {{# each bill}}
                     <tr>
-                      <td>Chacha Choudhary</td>
-                      <td>saabu.chachu@gmail.com</td>
-                      <td>We own you</td>
+                      <td>{{this.name}}</td>
+                      <td>{{this.amount}}</td>
+                      <td>{{this.note}}</td>
 
                     </tr>
                 {{/each}}
@@ -85,21 +85,21 @@
                 
                <form method="post"   id = "friend1" action="/users/addMember/{{groupId}}">
                 <div class="form-group">
-                                <label>Friend email</label>
-                                <select form="friend1" class="form-control" name="member_email" placeholder="Enter Friend Details">
+                        <label>Friend email</label>
+                        <select form="friend1" class="form-control" name="member_email" placeholder="Enter Friend Details">
 
-                                    {{# each friend}}
-                                    <option value="{{this.email}}">{{this.name}}</option>
-                                    {{/each}}
-                                </select>
+                            {{# each friend}}
+                            <option value="{{this.email}}">{{this.name}}</option>
+                            {{/each}}
+                        </select>
 
                 </div>
                             <button type="submit" class="btn btn-default">Submit</button>
               </form>
-                
-                
+
+
             </div>
-            
+
             <!-- Modal Footer -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-default"
@@ -130,33 +130,30 @@
              <!-- Modal Body -->
              <div class="modal-body">
 
-                 <form method="post" action="user/addBill/:{{groupId}}">
+                 <form method="post" action ="/users/group/addBill/{{groupId}}">
                      <div class="form-group">
-                         <label>Paid By</label>
-                         <input type="text" class="form-control" name="paid_by" placeholder="Paid By" required>
+                         <label>Note</label>
+                         <input type="text" class="form-control" name="note" placeholder="Comment" required>
                      </div>
                      <div class="form-group">
                          <label>Amount</label>
                          <input type="number" class="form-control" name="amount" placeholder="Amount" required>
                      </div>
                      <div class="form-group">
-                        <div id="dynamicInput">
-                            Divided Between<br>
-                             <input list="friends" name="myInputs[]" placeholder="Partners name">
-                                  <datalist id="friend">
-                                      {{# each member}}
-                                          <option value="{{members._id}}"> {{members.name}}</option>
-                                      {{/each}}
-
-                                  </datalist>
-                               <input type="number"  name = "myInputs1[]" placeholder="amount">
-                        </div>
-                       <input type="button" value="Add another text input" onClick="addInput('dynamicInput');">
+                         <div id="dynamicInput">
+                             Divided Between<br>
+                             <input list="friends" type="email" name="myInputs[]" placeholder="Partners name">
+                             <datalist id="friends">
+                                 {{# each member}}
+                                     <option value="{{this.email}}">
+                                 {{/each}}
+                             </datalist>
+                             <input type="number"  name = "myInputs1[]" placeholder="amount">
+                         </div>
                      </div>
+                     <input type="button" value="Add another text input" onClick="addInput('dynamicInput');">
                      <button type="submit" class="btn btn-default">Submit</button>
                  </form>
-
-
              </div>
 
              <!-- Modal Footer -->
@@ -222,7 +219,7 @@ function addInput(divName){
      }
      else {
           var newdiv = document.createElement('div');
-          newdiv.innerHTML = "Divided Between " + (counter + 1) + " <br><input type='text' name='myInputs[]'> <input type='text' name='myInputs[]'>";
+          newdiv.innerHTML = "Divided Between " + (counter + 1) + "<br><input list='friends' type='email' name='myInputs[]'> <input type='number' name='myInputs1[]'>";
           document.getElementById(divName).appendChild(newdiv);
           counter++;
      }
