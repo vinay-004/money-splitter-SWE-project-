@@ -20,7 +20,6 @@ module.exports = function(io){
             css: ['style.css', 'bootstrap.css','image.css']
         });
     });
-var group_id;
 
     router.post('/register', function(req, res){
         
@@ -143,9 +142,7 @@ var group_id;
 
 
 
-    router.post('/login',
-      passport.authenticate('local', {successRedirect:'/', failureRedirect:'/users/login',failureFlash: true}),
-      function(req, res) {
+    router.post('/login',passport.authenticate('local', {successRedirect:'/', failureRedirect:'/users/login',failureFlash: true}),function(req, res) {
 
         res.redirect('/');
       });
@@ -159,13 +156,14 @@ var group_id;
     });
 
 
-     router.post('/addMember',ensureAuthenticated, function(req, res){
+     router.post('/addMember/:id',ensureAuthenticated, function(req, res){
 
-        var groupId = group_id;
+        var groupId = req.params.id;
         var member_email = req.body.member_email;
        
        console.log(groupId);
        console.log(member_email);
+       console.log(req);
         Group.getGroupById(groupId, function(err, mygroup){
             if(err){
                 console.log("Error" + err);
@@ -179,6 +177,7 @@ var group_id;
             }
             else{
                 console.log(mygroup);
+                var flag =false;
                 User.findOneAndUpdate({email : req.body.member_email}, {$addToSet: {groups: mygroup._id}},function(err,model){
                     if(err ){
                         console.log(err);
@@ -328,19 +327,212 @@ var group_id;
                     else {
                         console.log(members);
                         console.log(group.bills);
-                            res.render('group',{
-                                member: members,
-                                bill : group.bills,
-                                css: ['dashboard.css', 'bootstrap.css','dashboardimage2.css']
+                        var option;
+                        if(group.owner.equals(req.user._id)){
+                            option= group_id;
+                        }
+                        else{
+                            option =null;
+                            console.log("owner " + group.owner + " user "+ req.user._id);
+                        }
+                            var billboard=[];
+                        for(var i =0;i<group.bills.length;i++){
+                            console.log("Bill " + i + " " +group.bills[i].amount);
+                            User.findById(group.bills[i].paid_By,function (err, usr) {
+
+                                billboard.push({
+                                    name : usr.first_name + usr.last_name,
+                                    //amount : group.bills[i].amount,
+                                    //note :group.bills[i].note
+                                });
+
                             });
+
+                        }
+                            console.log(req.user.friend);
+                            res.render('group', {
+                                friend : req.user.friend,
+                                member: members,
+                                bill: billboard,
+                                groupId: group_id,
+                                settleOption: option,
+                                css: ['dashboard.css', 'bootstrap.css', 'dashboardimage2.css']
+                            });
+
                     }
 
-                })
+                });
 
             }
         });
 
     });
+    router.post('/group/settle/:id',ensureAuthenticated,function (req,res) {
+        var group_id = req.params.id;
+
+       Group.getGroupById(group_id,function(err,group){
+            if(err){
+                console.log(err);
+                req.flash('error_msg', 'Something went wrong.Try again.');
+                res.redirect('/');
+            }
+            else if(group===null){
+                console.log('ERROR user not found');
+                req.flash('error_msg', 'No such group');
+                res.redirect('/');
+            }
+            else{
+                for(var i=0 ;i<group.bills.length;i++){
+                    for(var j=0;j<group.bills[i].partners.length;j++){
+                        if(!group.bills[i].partners[j].status.equals("Unpaied")){
+                            group.bills[i].partners[j].status="Paid";
+                                User.getUserById(group.bills[i].paid_by, function (err,user) {
+                                    for(var n =0;n<user.friend.length;n++){
+                                        if(user.friend[i].email.equals(group.bills[i].partners[j].email)){
+                                            var amt  =(user.friend[i].amount -  group.bills[i].partners[j].amount);
+                                            if(amt > 0 ){
+                                                User.update(
+                                                    { $and:[{"friend.email":user.friend[i].email },{"email": user.email}]},
+                                                    { "$set": { "friend.$.action": "You owe you friend" },
+                                                        "$set":{"friend.$.amount" : amt} },
+                                                    function (err, us) {
+                                                        User.update(
+                                                            { $and:[{"friend.email": user.email },{"email": user.friend[i].email}]},
+                                                            { "$set": { "friend.$.action": "Your friend owe you" },
+                                                                "$set":{"friend.$.amount" : -amt} },
+                                                            function (err,fk) {
+
+                                                            }
+
+                                                        )
+                                                    }
+
+                                                )
+
+
+                                            }else if(amt <0 ){
+
+                                                User.update(
+                                                    { $and:[{"friend.email":user.friend[i].email },{"email": user.email}]},
+                                                    { "$set": { "friend.$.action": "Your friend owe you" },
+                                                        "$set":{"friend.$.amount" : amt} },
+                                                    function (err,us) {
+                                                        User.update(
+                                                            { $and:[{"friend.email": user.email },{"email": user.friend[i].email}]},
+                                                            { "$set": { "friend.$.action": "You owe you friend" },
+                                                                "$set":{"friend.$.amount" : -amt} },
+                                                            function (err,fk) {
+
+                                                            }
+
+                                                        )
+                                                    }
+
+                                                )
+
+
+
+                                            }else {
+                                                User.update(
+                                                    {$and: [{"friend.email": user.friend[i].email}, {"email": user.email}]},
+                                                    {
+                                                        "$set": {"friend.$.action": "life is good"},
+                                                        "$set": {"friend.$.amount": amt}
+                                                    },
+                                                    function (err, fk) {
+                                                        User.update(
+                                                            {$and: [{"friend.email": user.email}, {"email": user.friend[i].email}]},
+                                                            {
+                                                                "$set": {"friend.$.action": "life is good"},
+                                                                "$set": {"friend.$.amount": -amt}
+                                                            },
+                                                            function (err, fk) {
+
+                                                            }
+                                                        )
+                                                    }
+                                                )
+                                            }
+
+                                        }
+                                    }
+                                }
+                                )
+                        }
+                    }
+                }
+
+
+
+
+            }
+        });
+    });
+    router.post('/group/addBill/:id',ensureAuthenticated,function (req,res) {
+        var group_id = req.params.id;
+        var part = req.body.myInputs;
+        var amounts = req.body.myInputs1;
+        var amount = req.body.amount;
+        var note = req.body.note;
+        console.log(group_id);
+
+        console.log(part);
+        console.log(amounts);
+        console.log(amount);
+        console.log(note);
+        var sum =parseInt(amounts[0]);
+        for(var m =1;m<part.length;m++){
+            sum+=parseInt(amounts[m]);
+        }
+        console.log("sum" + sum);
+        if(sum==amount){
+            var  newBill = {
+                paid_By : req.user._id,
+                amount : amount,
+                note : note,
+                partners: []
+
+            };
+            for(var m =0;m<part.length;m++){
+                User.getUserByUsername(part[m],function (err,pt){
+                    newBill.partners.push({
+                        id : pt._id,
+                        amount : amounts[m],
+                        status :"Unpaid"
+                    });
+                });
+
+            }
+
+            Group.findOneAndUpdate({_id : group_id},{$addToSet:{bills : newBill}},function(err,group){
+                if(err){
+                    console.log(err);
+                    req.flash('error_msg', 'Something went wrong.Try again.');
+                    res.redirect('/users/group/'+ group_id);
+                }
+                else if(group===null){
+                    console.log('ERROR user not found');
+                    req.flash('error_msg', 'No such group');
+                    res.redirect('/users/group/'+ group_id);
+                }
+                else{
+                    req.flash('success_msg','Bill added');
+                    res.redirect('/users/group/'+ group_id);
+
+
+
+
+                }
+            });
+        }else{
+            req.flash('error_msg','Sum dosn\'t match');
+            res.redirect('/users/group/'+ group_id);
+        }
+
+    });
+
+
+
 
     io.sockets.on('connection',function(socket){
     connections.push(socket);

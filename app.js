@@ -32,7 +32,7 @@ app.set('view engine', 'handlebars');
 
 // BodyParser Middleware
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Set Static Folder
@@ -76,7 +76,7 @@ app.use(function (req, res, next) {
   res.locals.error_msg = req.flash('error_msg');
   res.locals.error = req.flash('error');
   res.locals.user = req.user || null;  
-  res.locals.group = req.group || null;                         //to use user object globally from everywhere on website
+  res.locals.groupId = req.groupId || null;                        //to use user object globally from everywhere on website
   next();
 });
 

@@ -1,6 +1,6 @@
 <div class="container-fluid">
       <div class="row">
-        <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
+      <!--  <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar"> 
           <ul class="nav nav-pills flex-column">
             <li class="nav-item">
               <a class="nav-link active" href="#">Members<span class="sr-only">(current)</span></a>
@@ -11,15 +11,15 @@
             </li>
             {{/each}}
           </ul>
-        </nav>
+        </nav>  -->
 
 
-<main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
+<main class="col-sm-12 ml-sm-auto col-md-12 pt-3" role="main">
     <div class="mainbody">
-          <h1>Group Dashboard</h1>
+          <h1>Manager Dashboard</h1>
 
           <section class="row text-center placeholders">
-            <div class="col-6 col-sm-3 placeholder">
+            <!--<div class="col-6 col-sm-3 placeholder">
               <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalNorm">
                 Add Member
             </button>
@@ -28,24 +28,23 @@
              <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalNorm1">
                 Add Bill
             </button>
-            </div>
-              {{# if settleOption}}
-                <div class="col-6 col-sm-3 placeholder">
-                 <button class="btn btn-primary btn-lg" onclick="user/group/settle/{{groupId}}" ">
-                    Settle
-                </button>
-                </div>
-              {{/if}}
+            </div>-->
+            <div class="col-6 col-sm-12 text-right placeholder">
+             <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalNorm1">
+                Reports
+            </button>
+            </div> 
           </section>
     </div>
-        <h2>Bills</h2>
+        <h2>Feedbacks</h2>
           <div class="table-responsive">
             <table class="table table-bordered table-hover">
               <thead>
                 <tr>
-                  <th>Paid By</th>
-                  <th>Amount</th>
-                  <th>Note</th>
+                  <th>Sr.No</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Message</th>
                   <!--<th>Flag</th> -->
                 </tr>
               </thead>
@@ -64,11 +63,12 @@
 
         </main>
 
+<!--
 <div class="modal fade" id="myModalNorm" tabindex="-1" role="dialog" 
      aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <!-- Modal Header -->
+            
             <div class="modal-header">
                 <button type="button" class="close" 
                    data-dismiss="modal">
@@ -80,7 +80,7 @@
                 </h4>
             </div>
             
-            <!-- Modal Body -->
+            
             <div class="modal-body">
                 
                <form method="post"   id = "friend1" action="/users/addMember/{{groupId}}">
@@ -100,7 +100,6 @@
 
             </div>
 
-            <!-- Modal Footer -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-default"
                         data-dismiss="modal">
@@ -110,12 +109,13 @@
         </div>
     </div>
 </div>
+-->
 
- <div class="modal fade" id="myModalNorm1" tabindex="-1" role="dialog"
+<!-- <div class="modal fade" id="myModalNorm1" tabindex="-1" role="dialog"
       aria-labelledby="myModalLabel" aria-hidden="true">
      <div class="modal-dialog">
          <div class="modal-content">
-             <!-- Modal Header -->
+            
              <div class="modal-header">
                  <button type="button" class="close"
                          data-dismiss="modal">
@@ -127,10 +127,10 @@
                  </h4>
              </div>
 
-             <!-- Modal Body -->
+             
              <div class="modal-body">
 
-                 <form method="post" id="code" action ="/users/group/addBill/{{groupId}}">
+                 <form method="post" action ="/users/group/addBill/{{groupId}}">
                      <div class="form-group">
                          <label>Note</label>
                          <input type="text" class="form-control" name="note" placeholder="Comment" required>
@@ -139,22 +139,6 @@
                          <label>Amount</label>
                          <input type="number" class="form-control" name="amount" placeholder="Amount" required>
                      </div>
-                     <!--<div class="form-group">
-                        <label>Enter Code</label>
-                        <select form="code" class="form-control" name="promocode" placeholder="Have a PromoCode?" style="height: 30px;">
-                          <option value="discount0"></option>
-                          <option value="discount0">Discount0</option>
-                          <option value="discount50">Discount50</option>
-                        </select>
-                     </div>-->
-                     <div class="form-group">
-                      <label>Enter Code</label><br>
-                     <input list="codes" name="code" placeholder="Have a PromoCode?" style="width:470px;">
-                        <datalist id="codes">
-                          <option value="Discount50">
-                          <option value="Discount0">
-                        </datalist>
-                      </div>
                      <div class="form-group">
                          <div id="dynamicInput">
                              Divided Between<br>
@@ -172,7 +156,7 @@
                  </form>
              </div>
 
-             <!-- Modal Footer -->
+             
              <div class="modal-footer">
                  <button type="button" class="btn btn-default"
                          data-dismiss="modal">
@@ -182,8 +166,8 @@
          </div>
      </div>
  </div>
-
-  <div class="container">
+-->
+ <!-- <div class="container">
        <div class="row">
         <div class="col-md-4">
           </div>
@@ -201,7 +185,7 @@
         </div>
        </div>
    </div>
-
+-->
    <script>
        $(function(){
            var socket = io.connect();

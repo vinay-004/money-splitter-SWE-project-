@@ -2554,18 +2554,6 @@ output {
   line-height: 1.42857143;
   color: #555;
 }
-#chatting{
- margin-left: 130px;  
-}
-#message{
-  background-image: url('background4.jpeg');
-  opacity: 0.1;
-}
-#message:focus{
-  background-image: url('background4.jpeg'); 
-  opacity: 0.8;
-}
-
 .form-control {
   display: block;
   width: 100%;
@@ -2573,7 +2561,9 @@ output {
   padding: 6px 12px;
   font-size: 14px;
   line-height: 1.42857143;
-  color: white;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
   border: 1px solid #ccc;
   border-radius: 4px;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
@@ -5859,7 +5849,6 @@ button.list-group-item-danger.active:focus {
 .well-sm {
   padding: 9px;
   border-radius: 3px;
-  background-image: url('background4.jpeg');
 }
 .close {
   float: right;
