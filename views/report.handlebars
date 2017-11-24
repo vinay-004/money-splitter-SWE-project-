@@ -18,54 +18,145 @@
     <div class="mainbody">
           <h1 style="color: rgb(246,182,182);">Manager Dashboard</h1>
 
-<input type="button" onclick="location.href='/users/manager/report';" value="Reports" />
+<input type="button" onclick="location.href='/users/manager/';" value="Back" />
 
-        
+        <div  class="chart-container" style="height:800px; width: 800px;">
+            <canvas id="myChart" style="background-color: #cbffda"></canvas>
+            <br>
+            <canvas id="myChart2" style="background-color: #fdcdff"></canvas>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script>
+
+        <script>
+            let myChart = document.getElementById('myChart').getContext('2d');
+            let myChart2 = document.getElementById('myChart2').getContext('2d');
+
+
+            // Global Options
+            Chart.defaults.global.defaultFontFamily = 'Lato';
+            Chart.defaults.global.defaultFontSize = 18;
+            Chart.defaults.global.defaultFontColor = '#777';
+
+            let massPopChart = new Chart(myChart, {
+                type:'bar', // bar, horizontalBar, pie, line, doughnut, radar, polarArea
+                data:{
+                    labels:['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday'],
+                    datasets:[{
+                        label:'Login Count',
+                        data:[
+                            617,
+                            810,
+                            500,
+                            659,
+                            512,
+                            507,
+                            390
+                        ],
+                        //backgroundColor:'green',
+                        backgroundColor:[
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)',
+                            'rgba(255, 159, 64, 0.6)',
+                            'rgba(255, 19, 164, 0.6)',
+                            'rgba(255, 99, 132, 0.6)'
+                        ],
+                        borderWidth:1,
+                        borderColor:'#777',
+                        hoverBorderWidth:3,
+                        hoverBorderColor:'#000'
+                    }]
+                },
+                options:{
+                    title:{
+                        display:true,
+                        text:'No of Customers Logged in Last 7 days',
+                        fontSize:25
+                    },
+                    legend:{
+                        display:true,
+                        position:'right',
+                        labels:{
+                            fontColor:'#000'
+                        }
+                    },
+                    layout:{
+                        padding:{
+                            left:50,
+                            right:0,
+                            bottom:0,
+                            top:0
+                        }
+                    },
+                    tooltips:{
+                        enabled:true
+                    }
+                }
+            });
+            let massPopChart2 = new Chart(myChart2, {
+                type:'polarArea', // bar, horizontalBar, pie, line, doughnut, radar, polarArea
+                data:{
+                    labels:['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday'],
+                    datasets:[{
+                        label:'Hrs',
+                        data:[
+                            181,
+                            45,
+                            153,
+                            60,
+                            106,
+                            219,
+                            105
+                        ],
+                        //backgroundColor:'green',
+                        backgroundColor:[
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)',
+                            'rgba(255, 159, 64, 0.6)',
+                            'rgba(255, 19, 164, 0.6)',
+                            'rgba(255, 99, 132, 0.6)'
+                        ],
+                        borderWidth:1,
+                        borderColor:'#777',
+                        hoverBorderWidth:3,
+                        hoverBorderColor:'#000'
+                    }]
+                },
+                options:{
+                    title:{
+                        display:true,
+                        text:'No of Hours Customers used our services',
+                        fontSize:25
+                    },
+                    legend:{
+                        display:true,
+                        position:'right',
+                        labels:{
+                            fontColor:'#000'
+                        }
+                    },
+                    layout:{
+                        padding:{
+                            left:50,
+                            right:0,
+                            bottom:0,
+                            top:0
+                        }
+                    },
+                    tooltips:{
+                        enabled:true
+                    }
+                }
+            });
+        </script>
+
     </div>
-        <h2>Feedbacks</h2>
-          <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-              <thead>
-                <tr>
-                  <th>Sr.No</th>
-                  <th>Message</th>
-                  <!--<th>Flag</th> -->
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>Nice Platform to split the Bill</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>You have to add more Features like pay via PayTm</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>Nice!</td>
-                </tr>
-                <tr>
-                  <td>4</td>
-                  <td>Get More Updates</td>
-                </tr>
-                <tr>
-                  <td>5</td>
-                  <td>It's very slow so work on it</td>
-                </tr>
-                <tr>
-                  <td>6</td>
-                  <td>bad expiernece as it is not accept my bajaj payment card</td>
-                </tr>
-                <tr>
-                  <td>7</td>
-                  <td>Design is not so good so improve it.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-        </main>
+     
 
 <!--
 <div class="modal fade" id="myModalNorm" tabindex="-1" role="dialog" 

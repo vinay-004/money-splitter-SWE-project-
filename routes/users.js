@@ -46,6 +46,12 @@ module.exports = function(io){
 
     });
 
+    router.get('/manager/report', function(req, res){
+        res.render('report',{
+            css: ['style.css', 'bootstrap.css','image.css']
+        });
+    });
+
     // Login
     router.get('/login', function(req, res){
         res.render('login',{
@@ -102,7 +108,7 @@ module.exports = function(io){
 
         }
     });
-
+    
     router.post('/addgroup', function(req, res){
         
         var group_name = req.body.group_name;
