@@ -79,49 +79,54 @@ module.exports.settlePartnership = function (req,PaidBy ,partnership,callback){
                         if (user.friend[n].email===partnership.id) {
                             var amt = parseInt(user.friend[n].amount - partnership.amount);
                             console.log("amount  :: " + amt);
-                            console.log(user.friend[n].email);
+                            console.log(user.friend[n].email.type);
                             if (amt > 0) {
                                 console.log("amout > 0");
-                                User.update(
-                                    {$and: [{"friend.email": user.friend[n].email}, {"email": user.email}]},
+                                User.findOneAndUpdate(
+                                    {$and: [{"friend.email": user.friend[n].email.toString()}, {"email": user.email.toString()}]},
                                     {
-                                        "$set": {"friend.$.action": "You owe you friend"},
-                                        "$set": {"friend.$.amount": amt}
+                                        "$set": {"friend.$.action": "You owe you friend",
+                                            "friend.$.amount": amt}
                                     },null);
-                                User.update(
-                                    {$and: [{"friend.email": user.email}, {"email": user.friend[n].email}]},
+                                User.findOneAndUpdate(
+                                    {$and: [{"friend.email": user.email.toString()}, {"email": user.friend[n].email.toString()}]},
                                     {
-                                        "$set": {"friend.$.action": "Your friend owe you"},
-                                        "$set": {"friend.$.amount": -amt}
+                                        "$set": {"friend.$.action": "Your friend owe you",
+                                            "friend.$.amount": -amt}
                                     },callback);
 
                             } else if (amt < 0) {
                                 console.log("amt <0 ");
-                                User.update(
+                                console.log( user.friend[n].email +  " " + user.email);
+                                User.findOneAndUpdate(
                                     {$and: [{"friend.email": user.friend[n].email}, {"email": user.email}]},
                                     {
-                                        "$set": {"friend.$.action": "Your friend owe you"},
-                                        "$set": {"friend.$.amount": amt}
-                                    },null);
-                                    User.update(
+                                        "$set": {"friend.$.action": "Your friend owe you",
+                                            "friend.$.amount": amt
+                                        }
+                                    },function (err,usr) {
+                                        console.log("updated user" + usr);
+                                    });
+                                User.findOneAndUpdate(
                                         {$and: [{"friend.email": user.email}, {"email": user.friend[n].email}]},
                                         {
-                                            "$set": {"friend.$.action": "You owe you friend"},
-                                            "$set": {"friend.$.amount": -amt}
+                                            "$set": {"friend.$.action": "You owe you friend",
+                                                "friend.$.amount": -amt
+                                            }
                                         },callback);
                             } else {
                                 console.log("amt =0");
-                                User.update(
+                                User.findOneAndUpdate(
                                     {$and: [{"friend.email": user.friend[n].email}, {"email": user.email}]},
                                     {
-                                        "$set": {"friend.$.action": "life is good"},
-                                        "$set": {"friend.$.amount": amt}
+                                        "$set": {"friend.$.action": "life is good",
+                                            "friend.$.amount": 0}
                                     },null);
-                                    User.update(
+                                User.findOneAndUpdate(
                                         {$and: [{"friend.email": user.email}, {"email": user.friend[n].email}]},
                                         {
-                                            "$set": {"friend.$.action": "life is good"},
-                                            "$set": {"friend.$.amount": -amt}
+                                            "$set": {"friend.$.action": "life is good",
+                                                "friend.$.amount": 0}
                                         },callback);
                             }
 
