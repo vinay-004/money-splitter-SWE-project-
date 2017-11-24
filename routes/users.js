@@ -370,7 +370,7 @@ module.exports = function(io){
             }
             else{
                 console.log("Bills " + group.bills.length);
-                var unpay= new String("Unpaid");
+                //var unpay= new String("Unpaid");
                 for(var i=0 ;i<group.bills.length;i++){
                     console.log("patners for bill " +  i +" are" + group.bills[i].partners.length);
                     for(var j=0;j<group.bills[i].partners.length;j++){
