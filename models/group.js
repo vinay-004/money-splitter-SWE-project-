@@ -63,78 +63,100 @@ module.exports.getGroupbyname = function(groupName,ownerid , callback){
 }
 
 module.exports.settlePartnership = function (req,PaidBy ,partnership,callback){
-
     User.getUserById(PaidBy, function (err,user) {
-                if(err){
-                    console.log(err);
-                    req.flash('error_msg', 'Something went wrong.Try again.');
-                    res.redirect('/');
-                }
-                else if(user===null){
-                    console.log('ERROR user not found');
-                }
-                else if(!(user.email===partnership.id)) {
-                    for (var n = 0; n < user.friend.length; n++) {
-                        console.log("number of friends " + user.friend.length);
-                        if (user.friend[n].email===partnership.id) {
-                            var amt = parseInt(user.friend[n].amount - partnership.amount);
-                            console.log("amount  :: " + amt);
-                            console.log(user.friend[n].email.type);
-                            if (amt > 0) {
-                                console.log("amout > 0");
-                                User.findOneAndUpdate(
-                                    {$and: [{"friend.email": user.friend[n].email.toString()}, {"email": user.email.toString()}]},
-                                    {
-                                        "$set": {"friend.$.action": "You owe you friend",
-                                            "friend.$.amount": amt}
-                                    },null);
-                                User.findOneAndUpdate(
-                                    {$and: [{"friend.email": user.email.toString()}, {"email": user.friend[n].email.toString()}]},
-                                    {
-                                        "$set": {"friend.$.action": "Your friend owe you",
-                                            "friend.$.amount": -amt}
-                                    },callback);
+        if(err){
+            console.log(err);
+            req.flash('error_msg', 'Something went wrong.Try again.');
+            res.redirect('/');
+        }
+        else if(user===null){
+            console.log('ERROR user not found');
+        }
+        else if(!(user.email===partnership.id)) {
+            for (var n = 0; n < user.friend.length; n++) {
+                console.log("number of friends " + user.friend.length);
+                if (user.friend[n].email===partnership.id) {
+                    var amt = parseInt(user.friend[n].amount - partnership.amount);
+                    console.log("amount  :: " + amt);
+                    console.log(user.friend[n].email.type);
 
-                            } else if (amt < 0) {
-                                console.log("amt <0 ");
-                                console.log( user.friend[n].email +  " " + user.email);
-                                User.findOneAndUpdate(
-                                    {$and: [{"friend.email": user.friend[n].email}, {"email": user.email}]},
-                                    {
-                                        "$set": {"friend.$.action": "Your friend owe you",
-                                            "friend.$.amount": amt
-                                        }
-                                    },function (err,usr) {
-                                        console.log("updated user" + usr);
-                                    });
-                                User.findOneAndUpdate(
-                                        {$and: [{"friend.email": user.email}, {"email": user.friend[n].email}]},
-                                        {
-                                            "$set": {"friend.$.action": "You owe you friend",
-                                                "friend.$.amount": -amt
-                                            }
-                                        },callback);
-                            } else {
-                                console.log("amt =0");
-                                User.findOneAndUpdate(
-                                    {$and: [{"friend.email": user.friend[n].email}, {"email": user.email}]},
-                                    {
-                                        "$set": {"friend.$.action": "life is good",
-                                            "friend.$.amount": 0}
-                                    },null);
-                                User.findOneAndUpdate(
-                                        {$and: [{"friend.email": user.email}, {"email": user.friend[n].email}]},
-                                        {
-                                            "$set": {"friend.$.action": "life is good",
-                                                "friend.$.amount": 0}
-                                        },callback);
-                            }
+                    if (amt > 0) {
+                        console.log("amout > 0");
+                        User.findOneAndUpdate(
+                            {$and: [{"friend.email": user.friend[n].email}, {"email": user.email}]},
+                            {
+                                "$set": {"friend.$.action": "You owe you friend",
+                                    "friend.$.amount": amt}
+                            },null);
 
-                        }
+                        User.findOneAndUpdate(
+                            {$and: [{"friend.email": user.email}, {"email": user.friend[n].email}]},
+                            {
+                                "$set": {"friend.$.action": "Your friend owe you",
+                                    "friend.$.amount": -amt}
+                            },callback);
 
+
+                    } else if (amt < 0) {
+                        console.log("amt <0 ");
+                        console.log( user.friend[n].email +  " " + user.email);
+
+                        User.findOneAndUpdate(
+                            {$and: [{"friend.email": user.friend[n].email}, {"email": user.email}]},
+                            {
+                                "$set": {"friend.$.action": "Your friend owe you",
+                                    "friend.$.amount": amt
+                                }
+                            },function (err,usr) {
+                                console.log("updated user" + usr);
+                            });
+                        User.findOneAndUpdate(
+                            {$and: [{"friend.email": user.email}, {"email": user.friend[n].email}]},
+                            {
+                                "$set": {"friend.$.action": "You owe you friend",
+                                    "friend.$.amount": -amt
+                                }
+                            },callback);
+                    } else {
+                        console.log("amt =0");
+
+                        User.findOneAndUpdate(
+                            {$and: [{"friend.email": user.friend[n].email}, {"email": user.email}]},
+                            {
+                                "$set": {"friend.$.action": "life is good",
+                                    "friend.$.amount": 0}
+                            },null);
+                        User.findOneAndUpdate(
+                            {$and: [{"friend.email": user.email}, {"email": user.friend[n].email}]},
+                            {
+                                "$set": {"friend.$.action": "life is good",
+                                    "friend.$.amount": 0}
+                            },callback);
                     }
+
                 }
-            });
+
+            }
+        }
+    });
+module.exports.settled = function (grpId) {
+   // console.log("parternship " + partnership._id);
+    Group.findOne({"_id": grpId},function (err,grp) {
+        if(err){
+            console.error("Can't update partnership " + err);
+        }else if(grp=== null){
+            console.log("Can't find partnership");
+        }
+        else{
+            for(var i = 0; i <grp.bills.length;i++){
+                for(var j=0;grp.bills[i].partners.length;j++){
+                    grp.bills[i].partners[j].status="Paid";
+                }
+            }
+            grp.save();
+        }
+    });
+}
 }
 
 
