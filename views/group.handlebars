@@ -16,26 +16,31 @@
 
 <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
     <div class="mainbody">
-          <h1>Group Dashboard</h1>
+          <h1 style="color: rgb(246,182,182);">Group Dashboard</h1>
 
           <section class="row text-center placeholders">
-            <div class="col-6 col-sm-3 placeholder">
+            <div class="col-4 col-sm-3 placeholder">
               <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalNorm">
                 Add Member
             </button>
             </div>
-            <div class="col-6 col-sm-3 placeholder">
-             <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalNorm1">
+            <div class="col-4 col-sm-3 placeholder">
+              <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalNorm1">
                 Add Bill
             </button>
             </div>
               {{# if settleOption}}
                 <div class="col-6 col-sm-3 placeholder">
-                 <button class="btn btn-primary btn-lg" onclick="user/group/settle/{{groupId}}" ">
+                    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalNorm3">
                     Settle
                 </button>
                 </div>
               {{/if}}
+            <div class="col-4 col-sm-3 placeholder">
+             <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalNorm2">
+                Feedback
+            </button>
+            </div>
           </section>
     </div>
         <h2>Bills</h2>
@@ -111,6 +116,48 @@
     </div>
 </div>
 
+          <div class="modal fade" id="myModalNorm3" tabindex="-1" role="dialog"
+               aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <!-- Modal Header -->
+                      <div class="modal-header">
+                          <button type="button" class="close"
+                                  data-dismiss="modal">
+                              <span aria-hidden="true">&times;</span>
+                              <span class="sr-only">Close</span>
+                          </button>
+                          <h4 class="modal-title" id="myModalLabel">
+                              Are you Sure to Settle this Group's transactions?
+                          </h4>
+                      </div>
+
+                      <!-- Modal Body -->
+                      <div class="modal-body">
+
+                          <form method="post"   id = "friend1" action="/users/group/settle/{{groupId}}">
+                              <div class="form-group">
+                              </div>
+                              <button type="submit" class="btn btn-default">Yes</button>
+                          </form>
+
+
+                      </div>
+
+                      <!-- Modal Footer -->
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-default"
+                                  data-dismiss="modal">
+                              Cancel
+                          </button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+
+
+
  <div class="modal fade" id="myModalNorm1" tabindex="-1" role="dialog"
       aria-labelledby="myModalLabel" aria-hidden="true">
      <div class="modal-dialog">
@@ -130,9 +177,7 @@
              <!-- Modal Body -->
              <div class="modal-body">
 
-
-                 <form method="post" id="code" action ="/users/group/addBill/{{groupId}}">
-
+                 <form method="post" action ="/users/group/addBill/{{groupId}}">
                      <div class="form-group">
                          <label>Note</label>
                          <input type="text" class="form-control" name="note" placeholder="Comment" required>
@@ -141,22 +186,6 @@
                          <label>Amount</label>
                          <input type="number" class="form-control" name="amount" placeholder="Amount" required>
                      </div>
-                     <!--<div class="form-group">
-                        <label>Enter Code</label>
-                        <select form="code" class="form-control" name="promocode" placeholder="Have a PromoCode?" style="height: 30px;">
-                          <option value="discount0"></option>
-                          <option value="discount0">Discount0</option>
-                          <option value="discount50">Discount50</option>
-                        </select>
-                     </div>-->
-                     <div class="form-group">
-                      <label>Enter Code</label><br>
-                     <input list="codes" name="code" placeholder="Have a PromoCode?" style="width:470px;">
-                        <datalist id="codes">
-                          <option value="Discount50">
-                          <option value="Discount0">
-                        </datalist>
-                      </div>
                      <div class="form-group">
                          <div id="dynamicInput">
                              Divided Between<br>
@@ -185,19 +214,60 @@
      </div>
  </div>
 
-  <div class="container">
-       <div class="row">
-        <div class="col-md-4">
-          </div>
-        <div class="col-md-8">
-            <div class="chat" id="chat"></div>
-            <form id="messageForm">
+ <div class="modal fade" id="myModalNorm2" tabindex="-1" role="dialog"
+      aria-labelledby="myModalLabel" aria-hidden="true">
+     <div class="modal-dialog">
+         <div class="modal-content">
+             <!-- Modal Header -->
+             <div class="modal-header">
+                 <button type="button" class="close"
+                         data-dismiss="modal">
+                     <span aria-hidden="true">&times;</span>
+                     <span class="sr-only">Close</span>
+                 </button>
+                 <h4 class="modal-title" id="myModalLabel">
+                     Add member Details
+                 </h4>
+             </div>
+
+             <!-- Modal Body -->
+             <div class="modal-body">
+
+                 <form method="post" action ="/users/group/addBill/{{groupId}}">
+                     <form id="messageForm">
                 <div class="form-group">
                     <label>Enter Message</label>
-                    <textarea class="form-control" id="message" cols="30" rows="10"></textarea>
+                    <textarea class="form-control" cols="50" rows="5"></textarea>
                     <br>
-                    <input type="submit" class="btn btn-primary" value="SendMessage" />
+                    <input type="submit" class="btn btn-primary" value="SendMessage">
+                </div>
+            </form>
+                 </form>
+             </div>
 
+             <!-- Modal Footer -->
+             <div class="modal-footer">
+                 <button type="button" class="btn btn-default"
+                         data-dismiss="modal">
+                     Close
+                 </button>
+             </div>
+         </div>
+     </div>
+ </div>
+
+  <div class="container">
+       <div class="row">
+        <div class="col-md-1">
+        	</div>
+        <div class="col-md-11">
+            <div class="chat" id="chat"></div>
+            <form id="messageForm">
+                <div class="form-group" id="chatmsg">
+                    <label>Enter Message</label>
+                    <textarea class="form-control" id="message" cols="50" rows="5"></textarea>
+                    <br>
+                    <input type="submit" class="btn btn-primary" value="SendMessage">
                 </div>
             </form>
         </div>
@@ -220,7 +290,7 @@
             });
 
             socket.on('new message',function(data){
-                $chat.append('<div class="well">' +data.msg + '</div>');
+                $chat.append('<div class="well well-sm" id="msgchat">' +data.msg + '</div>');
             });
        });
     

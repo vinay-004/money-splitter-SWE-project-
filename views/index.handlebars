@@ -15,7 +15,7 @@
 
         <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
         	<div class="mainbody">
-            <h1>Dashboard</h1>
+            <h1 style="color: rgb(246,182,182);">Dashboard</h1>
 
             <section class="row text-center placeholders">
                 <div class="col-6 col-sm-3 placeholder">
@@ -49,11 +49,22 @@
                                 <td>{{this.email}}</td>
                                 <td>{{this.action}}</td>
                                 <td>{{this.amount}}</td>
-                                {{# if this.amount}}
-                                    <td><button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalNorm">
-                                        Pay
-                                    </button></td>
-                                {{/if}}
+                                {{#if this.amount}}
+                                <td>
+                                    <form action="/users/charge" method="POST">
+                                        <input type="hidden" name="friend_email" value="{{this.email}}">
+                                        <input type="hidden" name="amount" value="{{this.amount}}">
+                                    <script
+                                        src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                        data-key="pk_test_7XgFxKBbjV4WsERwqqCLHpdX"
+                                        data-name="Pay Friends debt"
+                                        data-image="/img/header_image.png"
+                                        data-locale="auto">
+                                    </script>
+                                    </form>
+                                    </div>
+                                </td>
+                                  {{/if}}
                             </tr>
                         {{/each}}
                     </tbody>
