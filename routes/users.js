@@ -374,91 +374,14 @@ module.exports = function(io){
                 for(var i=0 ;i<group.bills.length;i++){
                     console.log("patners for bill " +  i +" are" + group.bills[i].partners.length);
                     for(var j=0;j<group.bills[i].partners.length;j++){
-                        console.log("bill " + i + " patrnership " + j+ " ststus " + group.bills[i].partners[j].status);
-                            group.bills[i].partners[j].status="Paid";
-                                User.getUserById(group.bills[i].paid_By, function (err,user) {
-                                    for(var n =0;n<user.friend.length;n++){
-                                        console.log("number of friends " + user.friend.length);
-                                        if(user.friend[n].email.equals(group.bills[i].partners[j].email)){
-                                            var amt  =(user.friend[n].amount -  group.bills[i].partners[j].amount);
-                                            if(amt > 0 ){
-                                                User.update(
-                                                    { $and:[{"friend.email":user.friend[n].email },{"email": user.email}]},
-                                                    { "$set": { "friend.$.action": "You owe you friend" },
-                                                        "$set":{"friend.$.amount" : amt} },
-                                                    function (err, us) {
-                                                        User.update(
-                                                            { $and:[{"friend.email": user.email },{"email": user.friend[n].email}]},
-                                                            { "$set": { "friend.$.action": "Your friend owe you" },
-                                                                "$set":{"friend.$.amount" : -amt} },
-                                                            function (err,fk) {
-
-                                                            }
-
-                                                        )
-                                                    }
-
-                                                )
-
-
-                                            }else if(amt <0 ){
-
-                                                User.update(
-                                                    { $and:[{"friend.email":user.friend[n].email },{"email": user.email}]},
-                                                    { "$set": { "friend.$.action": "Your friend owe you" },
-                                                        "$set":{"friend.$.amount" : amt} },
-                                                    function (err,us) {
-                                                        User.update(
-                                                            { $and:[{"friend.email": user.email },{"email": user.friend[n].email}]},
-                                                            { "$set": { "friend.$.action": "You owe you friend" },
-                                                                "$set":{"friend.$.amount" : -amt} },
-                                                            function (err,fk) {
-
-                                                            }
-
-                                                        )
-                                                    }
-
-                                                )
-
-
-
-                                            }else {
-                                                User.update(
-                                                    {$and: [{"friend.email": user.friend[n].email}, {"email": user.email}]},
-                                                    {
-                                                        "$set": {"friend.$.action": "life is good"},
-                                                        "$set": {"friend.$.amount": amt}
-                                                    },
-                                                    function (err, fk) {
-                                                        User.update(
-                                                            {$and: [{"friend.email": user.email}, {"email": user.friend[n].email}]},
-                                                            {
-                                                                "$set": {"friend.$.action": "life is good"},
-                                                                "$set": {"friend.$.amount": -amt}
-                                                            },
-                                                            function (err, fk) {
-
-                                                            }
-                                                        )
-                                                    }
-                                                )
-                                            }
-
-                                        }
-                                    }
-                                });
-
+                        console.log("bill " + i + " patrnership " + j+ " status " + group.bills[i].partners[j].status);
+                        Group.settlePartnership(group.bills[i].paid_By,group.bills[i].partners[j]);
                     }
                 }
-
-
-
-
+                req.flash('success_msg', 'Transactions will be updated soon.');
+                res.redirect('/');
             }
         });
-        req.flash('error_msg', 'Something went wrong.Try again.');
-        res.redirect('/');
 
     });
     router.post('/group/addBill/:id',ensureAuthenticated,function (req,res) {
