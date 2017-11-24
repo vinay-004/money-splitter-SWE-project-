@@ -14,13 +14,41 @@ module.exports = function(io){
         });
     });
 
+    router.get('/managerlogin', function(req, res){
+        res.render('managerlogin',{
+            css: ['style.css', 'bootstrap.css','image.css']
+        });
+    });
+
+    router.get('/manager', function(req, res){
+        res.render('manager',{
+            css: ['style.css', 'bootstrap.css','image.css']
+        });
+    });
+
+    router.post('/loginmanager',function (req,res) {
+        var username = req.body.username;
+        var password = req.body.password;
+
+        console.log(username + ' ' + password);
+
+        if(username == 'manager' && password == 'manager'){
+            console.log(username + '' + password);
+            res.redirect('/users/manager');
+        }
+        else{
+            req.flash('error_msg', 'You have entered incorrect details');
+            res.redirect('/users/managerlogin');
+        }
+
+    });
+
     // Login
     router.get('/login', function(req, res){
         res.render('login',{
             css: ['style.css', 'bootstrap.css','image.css']
         });
     });
-
     router.post('/register', function(req, res){
         
         var first_name = req.body.first_name;
