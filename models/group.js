@@ -4,7 +4,7 @@ var User = require('../models/user');
 //var uniqueValidator = require('mongoose-unique-validator');
 var partnership = mongoose.Schema({
     id: {
-        type: String
+        type: mongoose.Schema.Types.ObjectId, ref  :   'User'
     },
     amount: {
         type: Number,
@@ -16,9 +16,6 @@ var partnership = mongoose.Schema({
 
 });
 var Bill = mongoose.Schema({
-    name : {
-        type : String
-    },
     paid_By:{
         type:mongoose.Schema.Types.ObjectId, ref :'User'
     },

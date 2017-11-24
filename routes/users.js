@@ -335,12 +335,25 @@ module.exports = function(io){
                             option =null;
                             console.log("owner " + group.owner + " user "+ req.user._id);
                         }
+                            var billboard=[];
+                        for(var i =0;i<group.bills.length;i++){
+                            console.log("Bill " + i + " " +group.bills[i].amount);
+                            User.findById(group.bills[i].paid_By,function (err, usr) {
 
+                                billboard.push({
+                                    name : usr.first_name + usr.last_name,
+                                    //amount : group.bills[i].amount,
+                                    //note :group.bills[i].note
+                                });
+
+                            });
+
+                        }
                             console.log(req.user.friend);
                             res.render('group', {
                                 friend : req.user.friend,
                                 member: members,
-                                bill: group.bills,
+                                bill: billboard,
                                 groupId: group_id,
                                 settleOption: option,
                                 css: ['dashboard.css', 'bootstrap.css', 'dashboardimage2.css']
@@ -356,7 +369,7 @@ module.exports = function(io){
     });
     router.post('/group/settle/:id',ensureAuthenticated,function (req,res) {
         var group_id = req.params.id;
-        console.log("Settele for group " + group_id);
+
        Group.getGroupById(group_id,function(err,group){
             if(err){
                 console.log(err);
@@ -369,20 +382,17 @@ module.exports = function(io){
                 res.redirect('/');
             }
             else{
-                console.log("Bills " + group.bills.length);
-                //var unpay= new String("Unpaid");
                 for(var i=0 ;i<group.bills.length;i++){
-                    console.log("patners for bill " +  i +" are" + group.bills[i].partners.length);
                     for(var j=0;j<group.bills[i].partners.length;j++){
                         console.log("bill " + i + " patrnership " + j+ " status " + group.bills[i].partners[j].status);
                         Group.settlePartnership(group.bills[i].paid_By,group.bills[i].partners[j]);
+
                     }
                 }
                 req.flash('success_msg', 'Transactions will be updated soon.');
                 res.redirect('/');
             }
         });
-
     });
     router.post('/group/addBill/:id',ensureAuthenticated,function (req,res) {
         var group_id = req.params.id;
@@ -403,19 +413,21 @@ module.exports = function(io){
         console.log("sum" + sum);
         if(sum==amount){
             var  newBill = {
-                name : req.user.first_name + " " + req.user.last_name,
                 paid_By : req.user._id,
                 amount : amount,
                 note : note,
-                partners: new Array()
+                partners: []
 
             };
             for(var m =0;m<part.length;m++){
+                User.getUserByUsername(part[m],function (err,pt){
                     newBill.partners.push({
-                        id : part[m],
-                        amount : parseInt(amounts[m]),
+                        id : pt._id,
+                        amount : amounts[m],
                         status :"Unpaid"
                     });
+                });
+
             }
 
             Group.findOneAndUpdate({_id : group_id},{$addToSet:{bills : newBill}},function(err,group){
@@ -446,6 +458,39 @@ module.exports = function(io){
     });
 
 
+        router.post('/charge',function(req,res){
+            var friend_email = req.body.friend_email;
+            var SenderEmail = req.user.email;
+
+            console.log(SenderEmail);
+            console.log(friend_email);
+
+
+ User.update(
+                      { $and:[{"friend.email": friend_email },{"email": SenderEmail}]},
+                      { "$set": { "friend.$.action": "You owe you friend" },
+                        "$set":{"friend.$.amount" : "0"} },function(err){
+                               console.log(SenderEmail);
+                            console.log(friend_email);
+                        });
+                                                    
+
+
+           stripe.customers.create({
+           email : req.body.email,
+           source : req.body.stripeToken
+       })
+       .then(customer => stripe.charges.create({
+           amount : req.body.amount * 100,
+           description : 'Friend debt' ,
+           currency : 'usd' ,
+           customer : customer.id
+       }))
+       .then(charge => {
+        req.flash('success_msg', 'Payment Done Successfully');
+        res.redirect('/')
+    });
+    });
 
 
     io.sockets.on('connection',function(socket){
