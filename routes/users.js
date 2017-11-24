@@ -42,13 +42,18 @@ module.exports = function(io){
     router.get('/manager', function(req, res){
         Feedback.find({},function (err,feedbacks) {
             res.render('manager',{
+                user :0,
+                manager : 1,
                 feedback : feedbacks,
                 css: ['style.css', 'bootstrap.css','image.css']
             });
         });
 
     });
-
+    router.get('/managerlogout',function (req,res) {
+        res.manager=0;
+        res.redirect('/');
+    });
     router.post('/loginmanager',function (req,res) {
         var username = req.body.username;
         var password = req.body.password;
@@ -71,6 +76,8 @@ module.exports = function(io){
 
     router.get('/manager/report', function(req, res){
         res.render('report',{
+            user :0,
+            manager :1,
             css: ['style.css', 'bootstrap.css','image.css']
         });
     });
