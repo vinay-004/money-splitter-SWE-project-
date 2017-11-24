@@ -335,25 +335,11 @@ module.exports = function(io){
                             option =null;
                             console.log("owner " + group.owner + " user "+ req.user._id);
                         }
-                            var billboard=[];
-                        for(var i =0;i<group.bills.length;i++){
-                            console.log("Bill " + i + " " +group.bills[i].amount);
-                            User.findById(group.bills[i].paid_By,function (err, usr) {
-
-                                billboard.push({
-                                    name : usr.first_name + usr.last_name,
-                                    //amount : group.bills[i].amount,
-                                    //note :group.bills[i].note
-                                });
-
-                            });
-
-                        }
-                            console.log(req.user.friend);
+                            console.log(req.user.friend[0].name);
                             res.render('group', {
                                 friend : req.user.friend,
                                 member: members,
-                                bill: billboard,
+                                bill: group.bills,
                                 groupId: group_id,
                                 settleOption: option,
                                 css: ['dashboard.css', 'bootstrap.css', 'dashboardimage2.css']
@@ -382,16 +368,24 @@ module.exports = function(io){
                 res.redirect('/');
             }
             else{
-                for(var i=0 ;i<group.bills.length;i++){
-                    for(var j=0;j<group.bills[i].partners.length;j++){
-                        console.log("bill " + i + " patrnership " + j+ " status " + group.bills[i].partners[j].status);
-                        Group.settlePartnership(group.bills[i].paid_By,group.bills[i].partners[j]);
+                var finish =0;
+                var currBill=null;
+                for(var i=0 ;i<group.bills.length;i++)
+                    currBill = group.bills[i].toJSON();
+                    finish += parseInt(currBill);
+                    console.log("lenght " + currBill.partners.length);
+                    for(var j=0;j<currBill.partners.length;j++){
+                        console.log("bill " + i + " patrnership " + j+ " status " + currBill.partners[j].status);
+                        console.log("user id "+ currBill.paid_By + " partnership " + currBill.partners[j]);
+                        Group.settlePartnership(req,currBill.paid_By,currBill.partners[j],function (err,usr) {
+                            finish-=1;
+                        });
 
                     }
                 }
+                while(finish){}
                 req.flash('success_msg', 'Transactions will be updated soon.');
                 res.redirect('/');
-            }
         });
     });
     router.post('/group/addBill/:id',ensureAuthenticated,function (req,res) {
@@ -413,20 +407,19 @@ module.exports = function(io){
         console.log("sum" + sum);
         if(sum==amount){
             var  newBill = {
+                name : req.user.first_name + " " + req.user.last_name,
                 paid_By : req.user._id,
                 amount : amount,
                 note : note,
-                partners: []
+                partners: new Array()
 
             };
             for(var m =0;m<part.length;m++){
-                User.getUserByUsername(part[m],function (err,pt){
                     newBill.partners.push({
-                        id : pt._id,
-                        amount : amounts[m],
+                        id : part[m],
+                        amount : parseInt(amounts[m]),
                         status :"Unpaid"
                     });
-                });
 
             }
 
