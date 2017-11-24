@@ -3,7 +3,7 @@ var bcrypt = require('bcryptjs');
 //var uniqueValidator = require('mongoose-unique-validator');
 var partnership = mongoose.Schema({
     id: {
-        type: mongoose.Schema.Types.ObjectId, ref  :   'User'
+        type: String
     },
     amount: {
         type: Number,
@@ -15,6 +15,9 @@ var partnership = mongoose.Schema({
 
 });
 var Bill = mongoose.Schema({
+    name : {
+        type : String
+    },
     paid_By:{
         type:mongoose.Schema.Types.ObjectId, ref :'User'
     },

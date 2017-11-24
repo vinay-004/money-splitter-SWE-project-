@@ -335,25 +335,12 @@ module.exports = function(io){
                             option =null;
                             console.log("owner " + group.owner + " user "+ req.user._id);
                         }
-                            var billboard=[];
-                        for(var i =0;i<group.bills.length;i++){
-                            console.log("Bill " + i + " " +group.bills[i].amount);
-                            User.findById(group.bills[i].paid_By,function (err, usr) {
 
-                                billboard.push({
-                                    name : usr.first_name + usr.last_name,
-                                    //amount : group.bills[i].amount,
-                                    //note :group.bills[i].note
-                                });
-
-                            });
-
-                        }
                             console.log(req.user.friend);
                             res.render('group', {
                                 friend : req.user.friend,
                                 member: members,
-                                bill: billboard,
+                                bill: group.bills,
                                 groupId: group_id,
                                 settleOption: option,
                                 css: ['dashboard.css', 'bootstrap.css', 'dashboardimage2.css']
@@ -369,7 +356,7 @@ module.exports = function(io){
     });
     router.post('/group/settle/:id',ensureAuthenticated,function (req,res) {
         var group_id = req.params.id;
-
+        console.log("Settele for group " + group_id);
        Group.getGroupById(group_id,function(err,group){
             if(err){
                 console.log(err);
@@ -382,22 +369,26 @@ module.exports = function(io){
                 res.redirect('/');
             }
             else{
+                console.log("Bills " + group.bills.length);
+                var unpay= new String("Unpaid");
                 for(var i=0 ;i<group.bills.length;i++){
+                    console.log("patners for bill " +  i +" are" + group.bills[i].partners.length);
                     for(var j=0;j<group.bills[i].partners.length;j++){
-                        if(!group.bills[i].partners[j].status.equals("Unpaied")){
+                        console.log("bill " + i + " patrnership " + j+ " ststus " + group.bills[i].partners[j].status);
                             group.bills[i].partners[j].status="Paid";
-                                User.getUserById(group.bills[i].paid_by, function (err,user) {
+                                User.getUserById(group.bills[i].paid_By, function (err,user) {
                                     for(var n =0;n<user.friend.length;n++){
-                                        if(user.friend[i].email.equals(group.bills[i].partners[j].email)){
-                                            var amt  =(user.friend[i].amount -  group.bills[i].partners[j].amount);
+                                        console.log("number of friends " + user.friend.length);
+                                        if(user.friend[n].email.equals(group.bills[i].partners[j].email)){
+                                            var amt  =(user.friend[n].amount -  group.bills[i].partners[j].amount);
                                             if(amt > 0 ){
                                                 User.update(
-                                                    { $and:[{"friend.email":user.friend[i].email },{"email": user.email}]},
+                                                    { $and:[{"friend.email":user.friend[n].email },{"email": user.email}]},
                                                     { "$set": { "friend.$.action": "You owe you friend" },
                                                         "$set":{"friend.$.amount" : amt} },
                                                     function (err, us) {
                                                         User.update(
-                                                            { $and:[{"friend.email": user.email },{"email": user.friend[i].email}]},
+                                                            { $and:[{"friend.email": user.email },{"email": user.friend[n].email}]},
                                                             { "$set": { "friend.$.action": "Your friend owe you" },
                                                                 "$set":{"friend.$.amount" : -amt} },
                                                             function (err,fk) {
@@ -413,12 +404,12 @@ module.exports = function(io){
                                             }else if(amt <0 ){
 
                                                 User.update(
-                                                    { $and:[{"friend.email":user.friend[i].email },{"email": user.email}]},
+                                                    { $and:[{"friend.email":user.friend[n].email },{"email": user.email}]},
                                                     { "$set": { "friend.$.action": "Your friend owe you" },
                                                         "$set":{"friend.$.amount" : amt} },
                                                     function (err,us) {
                                                         User.update(
-                                                            { $and:[{"friend.email": user.email },{"email": user.friend[i].email}]},
+                                                            { $and:[{"friend.email": user.email },{"email": user.friend[n].email}]},
                                                             { "$set": { "friend.$.action": "You owe you friend" },
                                                                 "$set":{"friend.$.amount" : -amt} },
                                                             function (err,fk) {
@@ -434,14 +425,14 @@ module.exports = function(io){
 
                                             }else {
                                                 User.update(
-                                                    {$and: [{"friend.email": user.friend[i].email}, {"email": user.email}]},
+                                                    {$and: [{"friend.email": user.friend[n].email}, {"email": user.email}]},
                                                     {
                                                         "$set": {"friend.$.action": "life is good"},
                                                         "$set": {"friend.$.amount": amt}
                                                     },
                                                     function (err, fk) {
                                                         User.update(
-                                                            {$and: [{"friend.email": user.email}, {"email": user.friend[i].email}]},
+                                                            {$and: [{"friend.email": user.email}, {"email": user.friend[n].email}]},
                                                             {
                                                                 "$set": {"friend.$.action": "life is good"},
                                                                 "$set": {"friend.$.amount": -amt}
@@ -456,9 +447,8 @@ module.exports = function(io){
 
                                         }
                                     }
-                                }
-                                )
-                        }
+                                });
+
                     }
                 }
 
@@ -467,6 +457,9 @@ module.exports = function(io){
 
             }
         });
+        req.flash('error_msg', 'Something went wrong.Try again.');
+        res.redirect('/');
+
     });
     router.post('/group/addBill/:id',ensureAuthenticated,function (req,res) {
         var group_id = req.params.id;
@@ -487,21 +480,19 @@ module.exports = function(io){
         console.log("sum" + sum);
         if(sum==amount){
             var  newBill = {
+                name : req.user.first_name + " " + req.user.last_name,
                 paid_By : req.user._id,
                 amount : amount,
                 note : note,
-                partners: []
+                partners: new Array()
 
             };
             for(var m =0;m<part.length;m++){
-                User.getUserByUsername(part[m],function (err,pt){
                     newBill.partners.push({
-                        id : pt._id,
-                        amount : amounts[m],
+                        id : part[m],
+                        amount : parseInt(amounts[m]),
                         status :"Unpaid"
                     });
-                });
-
             }
 
             Group.findOneAndUpdate({_id : group_id},{$addToSet:{bills : newBill}},function(err,group){
