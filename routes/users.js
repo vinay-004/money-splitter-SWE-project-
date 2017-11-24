@@ -34,7 +34,10 @@ module.exports = function(io){
 
         if(username == 'manager' && password == 'manager'){
             console.log(username + '' + password);
-            res.render('/users/manager');
+
+
+            res.redirect('/users/manager');
+
         }
         else{
             req.flash('error_msg', 'You have entered incorrect details');

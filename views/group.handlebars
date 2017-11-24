@@ -258,9 +258,11 @@
 
   <div class="container">
        <div class="row">
+
         <div class="col-md-1">
         	</div>
         <div class="col-md-11">
+
             <div class="chat" id="chat"></div>
             <form id="messageForm">
                 <div class="form-group" id="chatmsg">
@@ -290,7 +292,9 @@
             });
 
             socket.on('new message',function(data){
+
                 $chat.append('<div class="well well-sm" id="msgchat">' +data.msg + '</div>');
+
             });
        });
     
