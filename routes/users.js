@@ -406,6 +406,7 @@ module.exports = function(io){
 
 
                             res.render('group', {
+                                groupname : group.name,
                                 friend : req.user.friend,
                                 member: members,
                                 bill: group.bills,

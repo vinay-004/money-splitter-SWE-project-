@@ -12,8 +12,8 @@ var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var http = require('http');
 var stripe = require('stripe')('sk_test_VPmjNTc2VtrJ86yhm2UvwoYi');
-//mongoose.connect('mongodb://vinay:vinay@ds147454.mlab.com:47454/userdata');
-mongoose.connect('mongodb://localhost/UserData');
+mongoose.connect('mongodb://pranshu9:pranshu99@ds119436.mlab.com:19436/user');
+//mongoose.connect('mongodb://localhost/UserData');
 var db = mongoose.connection;
 
 // Init App
