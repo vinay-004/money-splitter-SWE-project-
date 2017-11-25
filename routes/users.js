@@ -6,6 +6,7 @@ module.exports = function(io){
     var LocalStrategy = require('passport-local').Strategy;
     var User = require('../models/user');
     var Group = require('../models/group');
+    var stripe = require('stripe')('sk_test_VPmjNTc2VtrJ86yhm2UvwoYi');
     var Feedback = require('../models/feedback');
     connections = [];
     // Register
