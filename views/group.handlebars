@@ -16,7 +16,7 @@
 
 <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
     <div class="mainbody">
-          <h1 style="color: rgb(246,182,182);">Group Dashboard</h1>
+          <h1 style="color: rgb(246,182,182);">{{groupname}} Dashboard</h1>
 
           <section class="row text-center placeholders">
             <div class="col-4 col-sm-3 placeholder">
@@ -36,11 +36,7 @@
                 </button>
                 </div>
               {{/if}}
-            <div class="col-4 col-sm-3 placeholder">
-             <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModalNorm2">
-                Feedback
-            </button>
-            </div>
+
           </section>
     </div>
         <h2>Bills</h2>
@@ -214,47 +210,7 @@
      </div>
  </div>
 
- <div class="modal fade" id="myModalNorm2" tabindex="-1" role="dialog"
-      aria-labelledby="myModalLabel" aria-hidden="true">
-     <div class="modal-dialog">
-         <div class="modal-content">
-             <!-- Modal Header -->
-             <div class="modal-header">
-                 <button type="button" class="close"
-                         data-dismiss="modal">
-                     <span aria-hidden="true">&times;</span>
-                     <span class="sr-only">Close</span>
-                 </button>
-                 <h4 class="modal-title" id="myModalLabel">
-                     Add member Details
-                 </h4>
-             </div>
 
-             <!-- Modal Body -->
-             <div class="modal-body">
-
-                 <form method="post" action ="/users/group/addBill/{{groupId}}">
-                     <form id="messageForm">
-                <div class="form-group">
-                    <label>Enter Message</label>
-                    <textarea class="form-control" cols="50" rows="5"></textarea>
-                    <br>
-                    <input type="submit" class="btn btn-primary" value="SendMessage">
-                </div>
-            </form>
-                 </form>
-             </div>
-
-             <!-- Modal Footer -->
-             <div class="modal-footer">
-                 <button type="button" class="btn btn-default"
-                         data-dismiss="modal">
-                     Close
-                 </button>
-             </div>
-         </div>
-     </div>
- </div>
 
   <div class="container">
        <div class="row">

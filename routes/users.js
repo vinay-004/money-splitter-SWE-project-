@@ -6,6 +6,8 @@ module.exports = function(io){
     var LocalStrategy = require('passport-local').Strategy;
     var User = require('../models/user');
     var Group = require('../models/group');
+    var stripe = require('stripe')('sk_test_VPmjNTc2VtrJ86yhm2UvwoYi');
+    var Feedback = require('../models/feedback');
     connections = [];
     // Register
     router.get('/register', function(req, res){
@@ -13,7 +15,25 @@ module.exports = function(io){
             css: ['style.css', 'bootstrap.css','image.css']
         });
     });
-
+    router.post('/feedback',function (req,res) {
+        var feed = new Feedback({
+            name : req.user.first_name + " " + req.user.last_name,
+            message : req.body.message
+        });
+        feed.save(function (err,feedbk) {
+            if(err){
+                console.error("Error " + err);
+                req.flash('error_msg', 'something went wrong');
+                res.redirect('/');
+            }else if(feedbk===null){
+                console.error("something went wrong ");
+                res.redirect('/');
+            }else{
+                req.flash('success_msg','feedback submitted');
+                res.redirect('/');
+            }
+        });
+    });
     router.get('/managerlogin', function(req, res){
         res.render('managerlogin',{
             css: ['style.css', 'bootstrap.css','image.css']
@@ -21,11 +41,20 @@ module.exports = function(io){
     });
 
     router.get('/manager', function(req, res){
-        res.render('manager',{
-            css: ['style.css', 'bootstrap.css','image.css']
+        Feedback.find({},function (err,feedbacks) {
+            res.render('manager',{
+                user :0,
+                manager : 1,
+                feedback : feedbacks,
+                css: ['style.css', 'bootstrap.css','image.css']
+            });
         });
-    });
 
+    });
+    router.get('/managerlogout',function (req,res) {
+        res.manager=0;
+        res.redirect('/');
+    });
     router.post('/loginmanager',function (req,res) {
         var username = req.body.username;
         var password = req.body.password;
@@ -48,6 +77,8 @@ module.exports = function(io){
 
     router.get('/manager/report', function(req, res){
         res.render('report',{
+            user :0,
+            manager :1,
             css: ['style.css', 'bootstrap.css','image.css']
         });
     });
@@ -372,8 +403,11 @@ module.exports = function(io){
                             option =null;
                             console.log("owner " + group.owner + " user "+ req.user._id);
                         }
-                            console.log(req.user.friend[0].name);
+
+
+
                             res.render('group', {
+                                groupname : group.name,
                                 friend : req.user.friend,
                                 member: members,
                                 bill: group.bills,
@@ -405,23 +439,26 @@ module.exports = function(io){
                 res.redirect('/');
             }
             else{
-                var finish =0;
+                //var finish =0;
                 var currBill=null;
                 for(var i=0 ;i<group.bills.length;i++)
                     currBill = group.bills[i].toJSON();
-                    finish += parseInt(currBill);
+                   // finish += parseInt(currBill.partners.length);
                     console.log("lenght " + currBill.partners.length);
                     for(var j=0;j<currBill.partners.length;j++){
                         console.log("bill " + i + " patrnership " + j+ " status " + currBill.partners[j].status);
                         console.log("user id "+ currBill.paid_By + " partnership " + currBill.partners[j]);
-                        Group.settlePartnership(req,currBill.paid_By,currBill.partners[j],function (err,usr) {
-                            finish-=1;
-                        });
-
+                        if(currBill.partners[j].status === "Unpaid"){
+                            Group.settlePartnership(req,currBill.paid_By,currBill.partners[j],function (err,usr){
+                                //finish =  finish  - 1;
+                                //console.log("finish reduced to " + finish);
+                            });
+                        }
                     }
                 }
-                while(finish){}
-                req.flash('success_msg', 'Transactions will be updated soon.');
+            //Group.settled(group._id);
+
+           req.flash('success_msg', 'Transactions will be updated soon.');
                 res.redirect('/');
         });
     });

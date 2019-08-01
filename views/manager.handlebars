@@ -18,7 +18,7 @@
     <div class="mainbody">
           <h1 style="color: rgb(246,182,182);">Manager Dashboard</h1>
 
-<input type="button" onclick="location.href='/users/manager/report';" value="Reports" />
+<input class="btn btn-primary btn-lg" type="button" onclick="location.href='/users/manager/report';" value="Reports" />
 
         
     </div>
@@ -27,40 +27,18 @@
             <table class="table table-bordered table-hover">
               <thead>
                 <tr>
-                  <th>Sr.No</th>
+                  <th>Name</th>
                   <th>Message</th>
                   <!--<th>Flag</th> -->
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>Nice Platform to split the Bill</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>You have to add more Features like pay via PayTm</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>Nice!</td>
-                </tr>
-                <tr>
-                  <td>4</td>
-                  <td>Get More Updates</td>
-                </tr>
-                <tr>
-                  <td>5</td>
-                  <td>It's very slow so work on it</td>
-                </tr>
-                <tr>
-                  <td>6</td>
-                  <td>bad expiernece as it is not accept my bajaj payment card</td>
-                </tr>
-                <tr>
-                  <td>7</td>
-                  <td>Design is not so good so improve it.</td>
-                </tr>
+    {{# each feedback}}
+        <tr>
+            <td>{{this.name}}</td>
+            <td>{{this.message}}</td>
+        </tr>
+    {{/each}}
               </tbody>
             </table>
           </div>
