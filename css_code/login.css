@@ -1,0 +1,111 @@
+div.main {
+    border-radius: 0.625em;
+    background-color: rgb(250,250,250);
+    padding: 1.25em;
+    margin: 1.875em 29.975em;
+    border: 0.0625em solid #c2c7d0;
+    background: rgba(0,0,0,0.6);
+    /* box-shadow: 0px 0px 50px cyan; */
+}
+
+.heading3{
+	 margin: 0.625em;
+	 padding-left: 0.625em;
+	font-size: 1.875em;
+	color: white;
+
+}
+
+.error1{
+	width: 85%;
+    padding: 0.75em 1.25em 0.75em 2.5em;
+    margin-top: 1.5625em;
+    margin-bottom: 0.625em;
+    margin-left: 1.5625em;
+    border: 0.0625em solid #ccc;
+    border-radius: 0.25em;
+    box-sizing: border-box;
+    background-repeat: no-repeat;
+    background-position: 0.625em 0.625em;
+    background-image: url('../username.png');
+    background-size: 1.5625em;
+    font-size: 1.0625em;
+} 
+
+
+
+.error2{
+ 	width: 85%;
+	padding: 0.75em 1.25em 0.75em 2.5em;
+    margin-top: 0.125em;
+    margin-bottom: 0.625em;
+    margin-left: 1.5625em;
+    display: inline-block;
+    border: 0.0625em solid #ccc;
+    border-radius: 0.25em;
+    box-sizing: border-box;
+    background-repeat: no-repeat;
+    background-position: 0.625em 0.625em;
+    background-image: url('../lock.png');
+    background-size: 1.5625em;
+    font-size: 1.0625em;
+ }
+
+input[type=checkbox]{
+	margin-left: 1.575em;
+	margin-top: 0.625em;
+
+}
+
+.checkbox1{
+	color: white;
+	margin-left: 0.625em;
+	margin-top: 0.625em;
+}
+
+.Forgot1{
+	margin-left: 13.55em;
+}
+
+.error3{
+	width: 38%;
+	background-color: rgba(255, 102, 102, 0.8);
+    color: black;
+    padding: 0.875em 1.25em;
+    margin-top: 0.75em;
+    margin-bottom: 0.3125em;
+    margin-left: 9.825em;
+    border: none;
+    border-radius: 0.5625em;
+    cursor: pointer;
+}
+
+.error3:hover {
+    background-color: green;
+    color: white;
+}
+
+.error4{
+	margin-left: 2.1875em;
+	width: 70%;
+	background-color: rgb(192,192,192);
+	color: black;
+	margin-left: 4.875em;
+}
+
+.spacing{
+	margin-top: 1em;
+	margin-left: 1.125em;
+}
+
+.headline{
+	padding-left: 18.925em;
+	margin-top: 0.4375em;
+	color: white;
+}
+
+
+body{
+	background-image: url('../images/background4.jpeg');
+}
+
